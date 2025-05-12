@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { CreateLinkForm } from "@/components/dashboard/links/create-link-form";
 
 export default function CreateLinkPage() {

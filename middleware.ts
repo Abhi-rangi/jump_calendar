@@ -1,42 +1,48 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { getToken } from 'next-auth/jwt'
+import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request })
-  const isAuthPage = request.nextUrl.pathname.startsWith('/auth')
-  const isSchedulePage = request.nextUrl.pathname.startsWith('/schedule')
-  const isApiPage = request.nextUrl.pathname.startsWith('/api')
-  const isDashboardPage = request.nextUrl.pathname.startsWith('/dashboard')
+  const token = await getToken({ req: request });
+  const isAuthenticated = !!token;
 
-  // Allow public access to scheduling pages
-  if (isSchedulePage) {
-    return NextResponse.next()
+  // Define protected routes that require authentication
+  const protectedPaths = [
+    "/dashboard",
+    "/dashboard/links",
+    "/dashboard/meetings",
+    "/dashboard/calendars",
+    "/dashboard/scheduling",
+    "/dashboard/settings",
+  ];
+
+  const isProtectedPath = protectedPaths.some((path) =>
+    request.nextUrl.pathname.startsWith(path)
+  );
+
+  if (isProtectedPath && !isAuthenticated) {
+    const redirectUrl = new URL("/auth/signin", request.url);
+    redirectUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 
-  // Redirect authenticated users from auth pages to dashboard
-  if (isAuthPage && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+  if (request.nextUrl.pathname === "/" && isAuthenticated) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // Protect dashboard pages
-  if (isDashboardPage && !token) {
-    return NextResponse.redirect(new URL('/auth/signin', request.url))
-  }
-
-  // Allow API routes to handle their own authentication
-  if (isApiPage) {
-    return NextResponse.next()
-  }
-
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/auth/:path*',
-    '/schedule/:path*',
-    '/api/:path*'
-  ]
-} 
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|public).*)",
+  ],
+}; 
