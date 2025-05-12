@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import { MeetingsList } from "@/components/dashboard/meetings/meetings-list";
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function MeetingsPage() {
   const session = await getServerSession(authOptions);
 

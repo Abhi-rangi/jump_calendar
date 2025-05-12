@@ -1,23 +1,36 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { getCurrentUser } from "@/lib/auth"
-import { HubspotIntegration } from "@/components/dashboard/settings/hubspot-integration"
+export const dynamic = "force-dynamic";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { getCurrentUser } from "@/lib/auth";
+import { HubspotIntegration } from "@/components/dashboard/settings/hubspot-integration";
 
 export default async function IntegrationsPage() {
-  const user = await getCurrentUser()
+  const user = await getCurrentUser();
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Integrations</h2>
-        <p className="text-muted-foreground">Connect external services to enhance your scheduling</p>
+        <p className="text-muted-foreground">
+          Connect external services to enhance your scheduling
+        </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Google Calendar</CardTitle>
-            <CardDescription>Sync your meetings with Google Calendar</CardDescription>
+            <CardDescription>
+              Sync your meetings with Google Calendar
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-4">
@@ -44,7 +57,9 @@ export default async function IntegrationsPage() {
               </div>
               <div>
                 <p className="font-medium">Connected as {user?.email}</p>
-                <p className="text-sm text-muted-foreground">Your Google Calendar is connected</p>
+                <p className="text-sm text-muted-foreground">
+                  Your Google Calendar is connected
+                </p>
               </div>
             </div>
           </CardContent>
@@ -56,5 +71,5 @@ export default async function IntegrationsPage() {
         <HubspotIntegration />
       </div>
     </div>
-  )
+  );
 }
